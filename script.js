@@ -12,11 +12,11 @@ function gameBoard() {
     
     const getBoard = () => board;
 
-    const placeMark = (row, col, player) {
-        board[row][col] = player;
+    const placeMark = (row, col, token) => {
+        board[row][col] = token;
     };
 
-    const displayBoard = () {
+    const displayBoard = () => {
         console.log(board);
     };
 
@@ -28,4 +28,39 @@ function gameController(
     playerTwoName = "Player Two"
 ) {
     const board = gameBoard();
+    const players = [
+        {
+            name: playerOneName,
+            token: 'X'
+        },
+        {
+            name: playerTwoName,
+            token: 'O'
+        }
+    ];
+    
+    let activePlayer = players[0];
+    const switchActivePlayer = () => {
+        if (activePlayer===players[0]) activePlayer = players[1];
+        else activePlayer = players[0];
+    };
+    const getActivePlayer = () => activePlayer;
+
+    const displayNewRound = () => {
+        board.displayBoard();
+        console.log(`${getActivePlayer().name}'s turn.'`);
+    };
+
+    const playRound = (row, col) => {
+        console.log(`Marking row ${row} column ${col} with an ${getActivePlayer().token}`);
+        board.placeMark(row, col, getActivePlayer().token);
+        switchActivePlayer();
+        displayNewRound();
+    };
+
+    return {
+        playRound
+    };
 }
+
+const game = gameController();
