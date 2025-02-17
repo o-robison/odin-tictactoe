@@ -55,15 +55,25 @@ function gameController(
         console.log(`${getActivePlayer().name}'s turn.`);
     };
 
-    const checkWinner = () => {
-        //check rows
-        for (let row of board.getBoard()) {
+    const checkRows = (matrix) => {
+        for (let row of matrix) {
             var set = new Set(row);
-            if(set.size===1){
+            if(set.size===1) {
                 if(!set.has(undefined)) return true;
             }
         }
-        //check cols
+        return false;
+    };
+
+    const transposeMatrix = (matrix) => {
+        //stackoverflow snippet, Fawad Ghafoor
+        return matrix[0].map((col, i) => matrix.map(row => row[i]));
+    };
+
+    const checkWinner = () => {
+        if(checkRows(board.getBoard())) return true;
+        let transposedBoard = transposeMatrix(board.getBoard());
+        if(checkRows(transposedBoard)) return true;
         //check diags
     };
 
