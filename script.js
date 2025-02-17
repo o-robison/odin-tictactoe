@@ -3,9 +3,9 @@ function gameBoard() {
     const cols = 3;
     const board = [];
 
-    for(var i=0; i<rows; i++){
+    for(let i=0; i<rows; i++){
         board[i] = [];
-        for(var j=0; j<cols; j++) {
+        for(let j=0; j<cols; j++) {
             board[i][j] = undefined;
         }
     }
@@ -55,13 +55,36 @@ function gameController(
         console.log(`${getActivePlayer().name}'s turn.`);
     };
 
+    const checkSet = (array) => {
+        let set = new Set(array);
+        if(set.size===1) {
+            if(!set.has(undefined)) return true;
+        }
+        return false;
+    };
+
     const checkRows = (matrix) => {
         for (let row of matrix) {
-            var set = new Set(row);
-            if(set.size===1) {
-                if(!set.has(undefined)) return true;
+            if(checkSet(row)) return true;
+        }
+        return false;
+    };
+
+    const checkDiags = (matrix) => {
+        let vals = [];
+        for (let i=0; i<3; i++) {
+            vals.push(matrix[i][i]);
+        }
+        if(checkSet(vals)) return true;
+
+        vals = [];
+        for (let i=0; i<3; i++) {
+            for (let j=2; j>-1; j--) {
+                vals.push(matrix[i][j]);
             }
         }
+        if(checkSet(vals)) return true;
+
         return false;
     };
 
@@ -74,7 +97,8 @@ function gameController(
         if(checkRows(board.getBoard())) return true;
         let transposedBoard = transposeMatrix(board.getBoard());
         if(checkRows(transposedBoard)) return true;
-        //check diags
+        if(checkDiags(board.getBoard())) return true;
+        return false;
     };
 
     const playRound = (row, col) => {
