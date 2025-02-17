@@ -13,7 +13,11 @@ function gameBoard() {
     const getBoard = () => board;
 
     const placeMark = (row, col, token) => {
-        board[row][col] = token;
+        if(board[row][col]===null){
+            board[row][col] = token;
+            return true;
+        }
+        else return false;
     };
 
     const displayBoard = () => {
@@ -53,9 +57,12 @@ function gameController(
 
     const playRound = (row, col) => {
         console.log(`Marking row ${row} column ${col} with an ${getActivePlayer().token}`);
-        board.placeMark(row, col, getActivePlayer().token);
-        switchActivePlayer();
-        displayNewRound();
+        if (!board.placeMark(row, col, getActivePlayer().token)){
+            console.log("Space occupied, try again");
+        } else {
+            switchActivePlayer();
+            displayNewRound();
+        }
     };
 
     return {
