@@ -6,14 +6,14 @@ function gameBoard() {
     for(var i=0; i<rows; i++){
         board[i] = [];
         for(var j=0; j<cols; j++) {
-            board[i][j] = null;
+            board[i][j] = undefined;
         }
     }
     
     const getBoard = () => board;
 
     const placeMark = (row, col, token) => {
-        if(board[row][col]===null){
+        if(board[row][col]===undefined){
             board[row][col] = token;
             return true;
         }
@@ -52,7 +52,19 @@ function gameController(
 
     const displayNewRound = () => {
         board.displayBoard();
-        console.log(`${getActivePlayer().name}'s turn.'`);
+        console.log(`${getActivePlayer().name}'s turn.`);
+    };
+
+    const checkWinner = () => {
+        //check rows
+        for (let row of board.getBoard()) {
+            var set = new Set(row);
+            if(set.size===1){
+                if(!set.has(undefined)) return true;
+            }
+        }
+        //check cols
+        //check diags
     };
 
     const playRound = (row, col) => {
@@ -60,6 +72,10 @@ function gameController(
         if (!board.placeMark(row, col, getActivePlayer().token)){
             console.log("Space occupied, try again");
         } else {
+            if(checkWinner()) {
+                alert(`Winner is ${getActivePlayer().name}`);
+                return;
+            }
             switchActivePlayer();
             displayNewRound();
         }
