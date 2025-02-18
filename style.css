@@ -13,8 +13,41 @@ body {
     font-family: "Schoolbell", sans-serif;
 }
 
+dialog {
+    margin-top: 10vh;
+    max-width: 350px;
+    border: none;
+}
+
+dialog > form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+form > button {
+    color: var(--background-color);
+    background-color: var(--alt-text-color);
+    border: none;
+    padding: 8px 0;
+    font-size: 1.5rem;
+    font-family: "Schoolbell", sans-serif;
+    border-radius: 50px;
+}
+
+form > button:hover {
+    background-color: var(--background-color);
+    color: var(--alt-text-color);
+}
+
+form > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
 dialog::backdrop {
-    background-color: darkblue;
+    background: var(--background-color);
 }
 
 .board {

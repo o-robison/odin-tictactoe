@@ -161,4 +161,4 @@ function GameController(
     updateScreen();
 })();
 
-document.querySelector("#beginGame").show();
+document.querySelector("#beginGame").showModal();
