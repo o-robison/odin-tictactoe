@@ -128,6 +128,7 @@ function GameController(
             console.log("Space occupied, try again");
         } else {
             checkWinner();
+            checkCats();
             if(getGameState()===undefined){
                 switchActivePlayer();
                 displayNewRound();
@@ -148,10 +149,23 @@ function GameController(
     let game = undefined;
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
+    const restartDiv = document.querySelector(".restart");
     const modal = document.querySelector("dialog");
     modal.showModal();
 
     const startButton = document.querySelector("#startGame");
+
+    const showRestartButton = () => {
+        const restartButton = document.createElement("button");
+        restartButton.classList.add("realButton");
+        restartButton.textContent = "New Game";
+        restartButton.addEventListener("click", restartGame);
+        restartDiv.appendChild(restartButton);
+    };
+
+    const restartGame = () => {
+
+    };
 
     const updateScreen = (someoneWon = false) => {
         boardDiv.innerHTML = "";
@@ -159,8 +173,17 @@ function GameController(
         const activePlayer = game.getActivePlayer();
 
         const state = game.getGameState();
-        if(state==="won") playerTurnDiv.textContent = `${activePlayer.name} is the winner!`;
-        else if (state==="cats") playerTurnDiv.textContent = "Cat's game!";
+        if(state==="won"){
+            playerTurnDiv.textContent = `${activePlayer.name} is the winner!`;
+            showRestartButton();
+        }
+        else if (state==="cats"){
+            playerTurnDiv.textContent = "Cat's game!";
+            boardDiv.innerHTML = "";
+            boardDiv.innerHTML = '<img src="cat.jpg" width="300px" height="auto">';
+            showRestartButton();
+            return;
+        }
         else playerTurnDiv.textContent = `${activePlayer.name}'s turn.`
 
         board.forEach((row, rowIndex) => {
