@@ -107,12 +107,12 @@ function GameController(
             console.log("Space occupied, try again");
         } else {
             if(checkWinner()) {
-                alert(`Winner is ${getActivePlayer().name}`);
-                return;
+                return true;
             }
             switchActivePlayer();
             displayNewRound();
         }
+        return false;
     };
 
     return {
@@ -126,17 +126,19 @@ function GameController(
     let game = undefined;
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
+    let isWinner = false;
     const modal = document.querySelector("dialog");
     modal.showModal();
 
     const startButton = document.querySelector("#startGame");
 
-    const updateScreen = () => {
+    const updateScreen = (someoneWon = false) => {
         boardDiv.innerHTML = "";
         const board = game.getBoard();
         const activePlayer = game.getActivePlayer();
 
-        playerTurnDiv.textContent = `${activePlayer.name}'s turn.`
+        if(isWinner) playerTurnDiv.textContent = `${activePlayer.name} is the winner!`;
+        else playerTurnDiv.textContent = `${activePlayer.name}'s turn.`
 
         board.forEach((row, rowIndex) => {
             row.forEach((cell, colIndex) => {
@@ -147,7 +149,8 @@ function GameController(
                 cellButton.textContent = cell;
                 if(cell==="X") cellButton.classList.add("x");
                 else if (cell==="O") cellButton.classList.add("o");
-                cellButton.addEventListener("click", clickHandlerBoard);
+                if(!isWinner) cellButton.addEventListener("click", clickHandlerBoard);
+                else cellButton.removeEventListener("click", clickHandlerBoard);
                 boardDiv.appendChild(cellButton);
             });
         });
@@ -158,7 +161,7 @@ function GameController(
         if(!selectedRow) return;
         const selectedCol = e.target.dataset.col;
 
-        game.playRound(selectedRow, selectedCol);
+        if(game.playRound(selectedRow, selectedCol)) isWinner = true;
         updateScreen();
     };
 
