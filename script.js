@@ -141,6 +141,8 @@ function GameController(
                 cellButton.dataset.col = colIndex;
                 cellButton.dataset.row = rowIndex;
                 cellButton.textContent = cell;
+                if(cell==="X") cellButton.classList.add("x");
+                else if (cell==="O") cellButton.classList.add("o");
                 cellButton.addEventListener("click", clickHandlerBoard);
                 boardDiv.appendChild(cellButton);
             });
@@ -158,3 +160,5 @@ function GameController(
 
     updateScreen();
 })();
+
+document.querySelector("#beginGame").show();
