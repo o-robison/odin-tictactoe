@@ -3,12 +3,15 @@ function GameBoard() {
     const cols = 3;
     const board = [];
 
-    for(let i=0; i<rows; i++){
-        board[i] = [];
-        for(let j=0; j<cols; j++) {
-            board[i][j] = undefined;
+    const newBoard = () => {
+        for(let i=0; i<rows; i++){
+            board[i] = [];
+            for(let j=0; j<cols; j++) {
+                board[i][j] = undefined;
+            }
         }
-    }
+    };
+    newBoard();
     
     const getBoard = () => board;
 
@@ -24,7 +27,7 @@ function GameBoard() {
         console.log(board);
     };
 
-    return { getBoard, placeMark, displayBoard };
+    return { getBoard, placeMark, displayBoard, newBoard };
 }
 
 function GameController(
@@ -137,11 +140,18 @@ function GameController(
         return false;
     };
 
+    const newGame = () => {
+        board.newBoard();
+        gameState = undefined;
+        switchActivePlayer();
+    };
+
     return {
         playRound,
         getActivePlayer,
         getBoard: board.getBoard,
-        getGameState
+        getGameState,
+        newGame
     };
 }
 
@@ -158,13 +168,20 @@ function GameController(
     const showRestartButton = () => {
         const restartButton = document.createElement("button");
         restartButton.classList.add("realButton");
+        restartButton.id = "restartButton";
         restartButton.textContent = "New Game";
         restartButton.addEventListener("click", restartGame);
         restartDiv.appendChild(restartButton);
     };
 
-    const restartGame = () => {
+    const hideRestartButton = () => {
+        document.querySelector("#restartButton").remove();
+    };
 
+    const restartGame = () => {
+        game.newGame();
+        hideRestartButton();
+        updateScreen();
     };
 
     const updateScreen = (someoneWon = false) => {
