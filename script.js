@@ -123,9 +123,13 @@ function GameController(
 }
 
 (function ScreenController() {
-    const game = GameController();
+    let game = undefined;
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
+    const modal = document.querySelector("dialog");
+    modal.showModal();
+
+    const startButton = document.querySelector("#startGame");
 
     const updateScreen = () => {
         boardDiv.innerHTML = "";
@@ -158,7 +162,15 @@ function GameController(
         updateScreen();
     };
 
-    updateScreen();
-})();
+    const clickHandlerModal = (e) => {
+        e.preventDefault();
+        const playerOneName = document.querySelector("#playerOneName").value;
+        const playerTwoName = document.querySelector("#playerTwoName").value;
+        game = GameController(playerOneName, playerTwoName);
+        updateScreen();
+        modal.close();
+    };
 
-document.querySelector("#beginGame").showModal();
+    startButton.addEventListener("click", clickHandlerModal);
+
+})();
