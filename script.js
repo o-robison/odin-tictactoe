@@ -42,6 +42,8 @@ function GameController(
             token: 'O'
         }
     ];
+    let gameState = undefined;
+    const getGameState = () => gameState;
     
     let activePlayer = players[0];
     const switchActivePlayer = () => {
@@ -94,11 +96,30 @@ function GameController(
     };
 
     const checkWinner = () => {
-        if(checkRows(board.getBoard())) return true;
-        let transposedBoard = transposeMatrix(board.getBoard());
-        if(checkRows(transposedBoard)) return true;
-        if(checkDiags(board.getBoard())) return true;
-        return false;
+        const thisBoard = board.getBoard();
+        if(checkRows(thisBoard)){
+            gameState = "won";
+            return;
+        }
+        let transposedBoard = transposeMatrix(thisBoard);
+        if(checkRows(transposedBoard)){
+            gameState = "won";
+            return;
+        }
+        if(checkDiags(thisBoard)){
+            gameState = "won";
+            return;
+        }
+    };
+
+    const checkCats = () => {
+        const thisBoard = board.getBoard();
+        for (let row of thisBoard) {
+            for (let cell of row) {
+                if(cell===undefined) return;
+            }
+        }
+        gameState = "cats";
     };
 
     const playRound = (row, col) => {
@@ -106,11 +127,11 @@ function GameController(
         if (!board.placeMark(row, col, getActivePlayer().token)){
             console.log("Space occupied, try again");
         } else {
-            if(checkWinner()) {
-                return true;
+            checkWinner();
+            if(getGameState()===undefined){
+                switchActivePlayer();
+                displayNewRound();
             }
-            switchActivePlayer();
-            displayNewRound();
         }
         return false;
     };
@@ -118,7 +139,8 @@ function GameController(
     return {
         playRound,
         getActivePlayer,
-        getBoard: board.getBoard
+        getBoard: board.getBoard,
+        getGameState
     };
 }
 
@@ -126,7 +148,6 @@ function GameController(
     let game = undefined;
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
-    let isWinner = false;
     const modal = document.querySelector("dialog");
     modal.showModal();
 
@@ -137,7 +158,9 @@ function GameController(
         const board = game.getBoard();
         const activePlayer = game.getActivePlayer();
 
-        if(isWinner) playerTurnDiv.textContent = `${activePlayer.name} is the winner!`;
+        const state = game.getGameState();
+        if(state==="won") playerTurnDiv.textContent = `${activePlayer.name} is the winner!`;
+        else if (state==="cats") playerTurnDiv.textContent = "Cat's game!";
         else playerTurnDiv.textContent = `${activePlayer.name}'s turn.`
 
         board.forEach((row, rowIndex) => {
@@ -149,7 +172,7 @@ function GameController(
                 cellButton.textContent = cell;
                 if(cell==="X") cellButton.classList.add("x");
                 else if (cell==="O") cellButton.classList.add("o");
-                if(!isWinner) cellButton.addEventListener("click", clickHandlerBoard);
+                if(game.getGameState()===undefined) cellButton.addEventListener("click", clickHandlerBoard);
                 else cellButton.removeEventListener("click", clickHandlerBoard);
                 boardDiv.appendChild(cellButton);
             });
@@ -161,7 +184,7 @@ function GameController(
         if(!selectedRow) return;
         const selectedCol = e.target.dataset.col;
 
-        if(game.playRound(selectedRow, selectedCol)) isWinner = true;
+        game.playRound(selectedRow, selectedCol);
         updateScreen();
     };
 
